@@ -1,4 +1,6 @@
 use std::env;
+mod image;
+
 fn help(){
     // TODO: modify the help printout 
     println!("help")
@@ -18,6 +20,7 @@ fn main() {
         "--image" => { 
             println!("Image mode enabled");
             // TODO: add screenshot functionality
+            image::run();
         },
         "--help" => help(),
         // all the other cases

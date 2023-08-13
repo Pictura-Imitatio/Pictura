@@ -19,14 +19,14 @@ fn screenshot(xy1: Point, xy2: Point) -> screenshots::Image {
     capture.capture_area(corner.x, corner.y, width, height).unwrap()
 }
 
-fn main() {
+pub fn run() {
     let xy1 = Point {
-        x: 5,
-        y: 5,
+        x: 0,
+        y: 0,
     };
     let xy2 = Point {
-        x: 1070,
-        y: 1910,
+        x: 1920,
+        y: 1080,
     };
 
     let image = screenshot(xy1, xy2);
