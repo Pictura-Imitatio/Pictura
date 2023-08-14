@@ -14,7 +14,7 @@ enum Message {
 }
 
 
-fn main() {
+fn run() {
     let settings = Settings {
         window: window::Settings {
             resizable: false,
