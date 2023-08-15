@@ -1,6 +1,9 @@
-use std::env;
+use clap::Parser;
 mod image;
 mod gui;
+mod args;
+use args::Argumemts;
+
 
 fn help(){
     // TODO: modify the help printout 
@@ -8,7 +11,9 @@ fn help(){
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let args = Argumemts::parse();
+//    println!("{:?}", args);
+/*    let args: Vec<String> = env::args().collect();
     let mode = &args[1][..];
     match args.len() {
         1 => {
@@ -65,5 +70,5 @@ fn main() {
                 println!("pictura: invalid mode {}",mode);
             }
         }
-    }
+    } */
 }
