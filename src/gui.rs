@@ -14,7 +14,7 @@ enum Message {
 }
 
 
-fn run() {
+pub fn run() {
     let settings = Settings {
         window: window::Settings {
             resizable: false,
@@ -66,8 +66,7 @@ impl Application for App {
 
 mod widget {
     #![allow(dead_code)]
-    use crate::theme::Theme;
-
+    use crate::gui::theme::Theme;
     pub type Renderer = iced::Renderer<Theme>;
     pub type Element<'a, Message> = iced::Element<'a, Message, Renderer>;
     pub type Container<'a, Message> = iced::widget::Container<'a, Message, Renderer>;
