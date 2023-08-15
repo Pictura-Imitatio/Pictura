@@ -26,3 +26,4 @@ pictura --text -cp -t 5
 
 ## Dependencies
 `scrap=0.5.0`
+`iced= { _FILL_IN_BLANKS_ }`
