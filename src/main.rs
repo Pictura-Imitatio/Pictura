@@ -9,9 +9,10 @@ fn parse(args: Vec<String>){
     
     if args.len() == 0 {gui::run()}
     else{
-    args.iter().for_each(|x|{
+        let temp = "temp";
+        
         // TODO: replace outer iter and move it into inner iters
-        match &**x {
+        match &args[0][..] {
             "--version" => println!("{}", VERSION),
             "--help" => println!("{}", HELP),
             "-v" => println!("{}", VERSION),
@@ -20,38 +21,39 @@ fn parse(args: Vec<String>){
             // optional gui flag jsut for ocd ppl
             "--gui" => {
                 println!("AI text extraction mode enabled");
-               // DONE: add call for gui  
-               gui::run()
+                // DONE: add call for gui  
+                gui::run()
             },
 
             // text extraction mode
             "--text" => {
                 println!("AI text extraction mode enabled");
-               // TODO: add AI functionality  
+                // TODO: add AI functionality  
                 if args.len()>1{
-                    let cmd = &args[1];
-                    match &cmd[..] {
-                        "-o"  =>  println!("Output to file {}", &args[2][..]),
-                        "-v"  =>  println!("Verbose"),
-                        "-cp" =>  println!("Copy to clipboard"),
-                        "-t"  =>  println!("Wait {} seconds", &args[2][..]),
-                        _     =>  println!("Flag not found")
-                    }
+                    args.iter().for_each(|x|{
+                        match &**x {
+                            "-o"  =>  println!("Output to file {}", temp ),
+                            "-v"  =>  println!("Verbose"),
+                            "-cp" =>  println!("Copy to clipboard"),
+                            "-t"  =>  println!("Wait {} seconds", temp ),
+                                _     =>  println!("Flag not found")
+                        }
+                    });
                 }
             },
 
-            // image / normal sc flag
+                    // image / normal sc flag
             "--image" => { 
                 println!("Image mode enabled");
                 // DONE: add screenshot functionality
                 image::run();
-                
+
                 if args.len()>1{
                     let cmd = &args[1];
                     match &cmd[..] {
-                        "-o"  =>  println!("Output to file {}", &args[2][..]),
+                        "-o"  =>  println!("Output to file {}", temp),
                         "-cp" =>  println!("Copy to clipboard"),
-                        "-t"  =>  println!("Wait {} seconds", &args[2][..]),
+                        "-t"  =>  println!("Wait {} seconds", temp),
                         _     =>  println!("Flag not found")
                     }
                 }
@@ -59,8 +61,8 @@ fn parse(args: Vec<String>){
 
             // all the other cases
             _ => println!("pictura: invalid mode {}",args[0]),
+            
         }
-    });
     }
 }
 
