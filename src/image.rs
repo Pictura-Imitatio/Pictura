@@ -50,7 +50,7 @@ pub fn run(compression: Option<String>,
     let images = screenshot(bounds.0, bounds.1, screen);
     let mut compressed_buffers = Vec::new();
     for image in images {
-        match &*compression.unwrap_or_default().to_lowercase() {
+        match &*compression.clone().unwrap_or_default().to_lowercase() {
             "Best"  => {
                 compressed_buffers.push(image.to_png(Compression::Best).unwrap());
             },

@@ -64,11 +64,11 @@ fn parse(args: Vec<String>){
                         while i < args.len(){
                             match &args[i][..] {
                                 "-o"  =>  {
-                                    println!("Output to file {}", &args[i+1][..]);
                                     let compressed_images = image::run(None, None, (None, None));
                                     let mut k = 0;
                                     for image in compressed_images {
-                                        fs::write(format!("target/{}.png", i), image).unwrap();
+                                        // TODO: make option and unwrap or for default file location
+                                        fs::write(format!("{}/{}.png",&args[i+1][..], k), image).unwrap();
                                         k = k + 1;
                                     }
                                     i = i+1;
