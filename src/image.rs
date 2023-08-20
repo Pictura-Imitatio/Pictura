@@ -43,8 +43,9 @@ fn read() -> i32 {
 }
 
 pub fn run(compression: Option<String>, 
-           screen: Option<usize>,
-           bounds: (Option<Point>, Option<Point>)) -> Vec<u8> {
+           screen: Option<usize>, 
+           bounds: (Option<Point>, Option<Point>)) 
+            -> Vec<Vec<u8>> {
 
     let images = screenshot(bounds.0, bounds.1, screen);
     let mut compressed_buffers = Vec::new();

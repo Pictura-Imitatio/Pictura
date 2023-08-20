@@ -1,6 +1,7 @@
 mod image;
 mod gui;
-use std::env;
+use std::{ env, fs };
+use screenshots::Screen;
 
 fn parse(args: Vec<String>){
     println!("{:?}", args);
@@ -57,7 +58,6 @@ fn parse(args: Vec<String>){
                 "--image" => { 
                     println!("Image mode enabled");
                     // DONE: add screenshot functionality
-                    image::run();
 
                     if args.len()>1{
                         let mut i = j+1;
@@ -65,6 +65,12 @@ fn parse(args: Vec<String>){
                             match &args[i][..] {
                                 "-o"  =>  {
                                     println!("Output to file {}", &args[i+1][..]);
+                                    let compressed_images = image::run(None, None, (None, None));
+                                    let mut k = 0;
+                                    for image in compressed_images {
+                                        fs::write(format!("target/{}.png", i), image).unwrap();
+                                        k = k + 1;
+                                    }
                                     i = i+1;
                                 }
                                 "-cp" =>  println!("Copy to clipboard"),
