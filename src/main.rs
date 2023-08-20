@@ -4,65 +4,97 @@ use std::env;
 
 fn parse(args: Vec<String>){
     println!("{:?}", args);
-    let HELP = "RTFM";
-    let VERSION = "0.1.0";
+    let help = "RTFM";
+    let version = env!("CARGO_PKG_VERSION");
     
     if args.len() == 0 {gui::run()}
     else{
-        let temp = "temp";
-        
-        // TODO: replace outer iter and move it into inner iters
-        match &args[0][..] {
-            "--version" => println!("{}", VERSION),
-            "--help" => println!("{}", HELP),
-            "-v" => println!("{}", VERSION),
-            "-h" => println!("{}", HELP),
+        // DONE: replace outer iter and move it into inner iters
+        let mut j = 0;
+        while j < args.len(){
+            match &args[j][..] {
+                "--version" => println!("{}", version),
+                "--help" => println!("{}", help),
+                "-v" => println!("{}", version),
+                "-h" => println!("{}", help),
 
-            // optional gui flag jsut for ocd ppl
-            "--gui" => {
-                println!("AI text extraction mode enabled");
-                // DONE: add call for gui  
-                gui::run()
-            },
+                // optional gui flag jsut for ocd ppl
+                "--gui" => {
+                    println!("AI text extraction mode enabled");
+                    // DONE: add call for gui  
+                    gui::run()
+                },
 
-            // text extraction mode
-            "--text" => {
-                println!("AI text extraction mode enabled");
-                // TODO: add AI functionality  
-                if args.len()>1{
-                    args.iter().for_each(|x|{
-                        match &**x {
-                            "-o"  =>  println!("Output to file {}", temp ),
-                            "-v"  =>  println!("Verbose"),
-                            "-cp" =>  println!("Copy to clipboard"),
-                            "-t"  =>  println!("Wait {} seconds", temp ),
-                                _     =>  println!("Flag not found")
+                // text extraction mode
+                "--text" => {
+                    println!("AI text extraction mode enabled");
+                    // TODO: add AI functionality  
+                    if args.len()>1{
+                        let mut i = j+1;
+                        while i < args.len(){
+                            match &args[i][..] {
+                                "-o"  =>  {
+                                    println!("Output to file {}", &args[i+1][..]);
+                                    i = i+1;
+                                }
+                                "-v"  =>  println!("Verbose"),
+                                "-cp" =>  println!("Copy to clipboard"),
+                                "-t"  => { 
+                                    println!("Wait {} seconds", &args[i+1][..]);
+                                    i = i+1;
+                                }
+                                _     =>  {
+                                    j = i-1;
+                                    break;
+                                }
+                            }
+                            i = i+1;
                         }
-                    });
-                }
-            },
+                    }
+                },
 
-                    // image / normal sc flag
-            "--image" => { 
-                println!("Image mode enabled");
-                // DONE: add screenshot functionality
-                image::run();
+                        // image / normal sc flag
+                "--image" => { 
+                    println!("Image mode enabled");
+                    // DONE: add screenshot functionality
+                    image::run();
 
-                if args.len()>1{
-                    let cmd = &args[1];
-                    match &cmd[..] {
-                        "-o"  =>  println!("Output to file {}", temp),
-                        "-cp" =>  println!("Copy to clipboard"),
-                        "-t"  =>  println!("Wait {} seconds", temp),
-                        _     =>  println!("Flag not found")
+                    if args.len()>1{
+                        let mut i = j+1;
+                        while i < args.len(){
+                            match &args[i][..] {
+                                "-o"  =>  {
+                                    println!("Output to file {}", &args[i+1][..]);
+                                    i = i+1;
+                                }
+                                "-cp" =>  println!("Copy to clipboard"),
+                                "-t"  => { 
+                                    println!("Wait {} seconds", &args[i+1][..]);
+                                    i = i+1;
+                                }
+                                _     =>  {
+                                    j = i-1;
+                                    break;
+                                }
+                            }
+                            i = i+1;
+                        }
+                    }
+                },
+
+                // all the other cases
+                _ => {
+                    if j != args.len()-1{
+                        println!("pictura: invalid mode {}", args[j])
+                    }else{
+                        println!("Executed successfuly!");
                     }
                 }
-            },
-
-            // all the other cases
-            _ => println!("pictura: invalid mode {}",args[0]),
-            
+                
+            }
+            j = j+1;
         }
+        
     }
 }
 
