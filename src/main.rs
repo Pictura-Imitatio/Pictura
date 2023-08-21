@@ -14,20 +14,18 @@ fn parse(args: Vec<String>){
         let mut j = 0;
         while j < args.len(){
             match &args[j][..] {
-                "--version" => println!("{}", version),
-                "--help" => println!("{}", help),
-                "-v" => println!("{}", version),
-                "-h" => println!("{}", help),
+                "--version"  | "-v" => println!("{}", version),
+                "--help"     | "-h" => println!("{}", help),
 
                 // optional gui flag jsut for ocd ppl
-                "--gui" => {
+                "--gui"             => {
                     println!("AI text extraction mode enabled");
                     // DONE: add call for gui  
                     gui::run()
                 },
 
                 // text extraction mode
-                "--text" => {
+                "--text"     | "-T" => {
                     println!("AI text extraction mode enabled");
                     // TODO: add AI functionality  
                     if args.len()>1{
@@ -55,7 +53,7 @@ fn parse(args: Vec<String>){
                 },
 
                         // image / normal sc flag
-                "--image" => { 
+                "--image"    | "-I" => { 
                     println!("Image mode enabled");
                     // DONE: add screenshot functionality
 
@@ -63,8 +61,9 @@ fn parse(args: Vec<String>){
                         let mut i = j+1;
                         while i < args.len(){
                             match &args[i][..] {
-                                "-o"  =>  {
+                                "--output"    | "-o"  => {
                                     let points;
+                                    // TODO: harden this
                                     if i+2 < args.len() {
                                         points = (Some(image::Point{x: args[i+1][..].parse::<i32>().unwrap(), 
                                                                     y: args[i+2][..].parse::<i32>().unwrap()}), 
@@ -83,12 +82,12 @@ fn parse(args: Vec<String>){
                                     }
                                     i = i+1;
                                 }
-                                "-cp" =>  println!("Copy to clipboard"),
-                                "-t"  => { 
+                                "--clipboard" | "-cp" =>  println!("Copy to clipboard"),
+                                "-t"                  => { 
                                     println!("Wait {} seconds", &args[i+1][..]);
                                     i = i+1;
                                 },
-                                _     =>  {
+                                _                     =>  {
                                     j = i-1;
                                     break;
                                 }
@@ -97,7 +96,7 @@ fn parse(args: Vec<String>){
                         }
                     }
                 },
-                "--display-info" => {
+                "--display-info"    => {
                     let screens = Screen::all().unwrap();
                     for screen in screens {
                         println!("{screen:?}");
