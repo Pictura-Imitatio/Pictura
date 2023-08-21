@@ -14,7 +14,7 @@ fn global_to_local(point: &Point, screen: Screen) -> Point {
 }
 
 /* TODO: 
- *  TODO: - grab screens from point
+ *  DONE: - grab screens from point
  *  TODO: - attempt to allow a square of 2 monitors
  *  DONE: - make point order and position ambigious (i.e. (bl,tr), or (tl,br), etc)
  */
@@ -33,7 +33,7 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
 
     /* TODO:
      *  TODO: - what about the middle monitor
-     *          -- think about comparing the global coordinates of all screens to the range of tlbr
+     *      -- think about comparing the global coordinates of all screens to the range of tlbr
      * 
      *  */
     else {
@@ -56,7 +56,10 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
 
         if screen_tl.display_info.id != screen_br.display_info.id {
         /* TODO:
-         *  - 
+         *  - top to bottom
+         *  - test left to right
+         *  - test right to left
+         *  - cover middle screen
          */
             let local_tl_width  = screen_tl.display_info.width - local_tl.x as u32;
             let local_tl_height = (local_tl.y - global_to_local(&global_br, screen_tl).y) as u32;
@@ -73,9 +76,8 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
         }
 
         else {
-            /* TODO:
+            /* DONE:
              *  DONE: - convert global to local
-             *  TODO: - 
              */
             let width:u32  = (local_br.x - local_tl.x) as u32;
             let height:u32 = (local_br.y - local_tl.y) as u32;
