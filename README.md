@@ -24,6 +24,9 @@ pictura --text -cp -t 5
 | -cp, --clipboard          | copy to clipboard      |
 | -t {seconds}, --time      | delay in seconds       | 
 
+| Command | Description | 
+| ---------------- | ---------------------- |
+| --display-info    |   outputs global information display |
 ## Dependencies
 `scrap=0.5.0`
 `iced= { _FILL_IN_BLANKS_ }`

@@ -64,7 +64,16 @@ fn parse(args: Vec<String>){
                         while i < args.len(){
                             match &args[i][..] {
                                 "-o"  =>  {
-                                    let points: (Option<image::Point>, Option<image::Point>) = (Some(image::Point{x:10, y:500}), Some(image::Point{x:2000, y:100}));
+                                    let points;
+                                    if i+2 < args.len() {
+                                        points = (Some(image::Point{x: args[i+1][..].parse::<i32>().unwrap(), 
+                                                                    y: args[i+2][..].parse::<i32>().unwrap()}), 
+                                                  Some(image::Point{x: args[i+3][..].parse::<i32>().unwrap(), 
+                                                                    y: args[i+4][..].parse::<i32>().unwrap()}));
+                                    }
+                                    else { 
+                                        points = (None, None);
+                                    }
                                     let compressed_images = image::run(None, points);
                                     let mut k = 0;
                                     for image in compressed_images {
@@ -78,7 +87,7 @@ fn parse(args: Vec<String>){
                                 "-t"  => { 
                                     println!("Wait {} seconds", &args[i+1][..]);
                                     i = i+1;
-                                }
+                                },
                                 _     =>  {
                                     j = i-1;
                                     break;
@@ -86,6 +95,12 @@ fn parse(args: Vec<String>){
                             }
                             i = i+1;
                         }
+                    }
+                },
+                "--display-info" => {
+                    let screens = Screen::all().unwrap();
+                    for screen in screens {
+                        println!("{screen:?}");
                     }
                 },
 
