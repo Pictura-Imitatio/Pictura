@@ -7,16 +7,19 @@ pub struct Point {
 }
 
 fn global_to_local(point: &Point, screen: Screen) -> Point {
+    let x = point.x - screen.display_info.x;
+    let y = point.y - screen.display_info.y;
     Point {
-        x: point.x - screen.display_info.x,
-        y: point.y - screen.display_info.y,
+        x: if x > 0 { x } else { 0 },
+        y: if y > 0 { y } else { 0 },
     }
 }
 
 /* TODO: 
  *  DONE: - grab screens from point
  *  TODO: - attempt to allow a square of 2 monitors
- *  DONE: - make point order and position ambigious (i.e. (bl,tr), or (tl,br), etc)
+ *  TODO: - attempt to allow a square of 3+ monitors
+ *  DONE: - make point order and position ambigious (i.e. (bl,tr), (tl,br), etc)
  */
 fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screenshots::Image> {
     if global_coordinates.0.is_none() && global_coordinates.1.is_none() {
@@ -31,12 +34,11 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
         images
     }
 
-    /* TODO:
-     *  TODO: - what about the middle monitor
-     *      -- think about comparing the global coordinates of all screens to the range of tlbr
-     * 
-     *  */
     else {
+        /* TODO:
+         *  TODO: - what about the middle monitor
+         *      -- think about comparing the global coordinates of all screens to the range of tlbr
+         */
         let global_coordinates = (global_coordinates.0.unwrap(), global_coordinates.1.unwrap());
         let global_tl = Point { // The top left of the rectangle created by the global coordinates
             x: if global_coordinates.0.x < global_coordinates.1.x { global_coordinates.0.x } else { global_coordinates.1.x },
@@ -55,20 +57,22 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
         let local_br  = global_to_local(&global_br, screen_br);                  // Bottom right in local coordinates
 
         if screen_tl.display_info.id != screen_br.display_info.id {
-        /* TODO:
-         *  - top to bottom
-         *  - test left to right
-         *  - test right to left
-         *  - cover middle screen
-         */
+            /* TODO:
+             *  TODO: - top to bottom
+             *  - test left to right
+             *  - test right to left
+             *  TODO: - cover middle screen
+             */
+            let local_tl_br_helper = global_to_local(&global_br, screen_tl);
+            let local_br_tl_helper = global_to_local(&global_tl, screen_br);
             let local_tl_width  = screen_tl.display_info.width - local_tl.x as u32;
-            let local_tl_height = (local_tl.y - global_to_local(&global_br, screen_tl).y) as u32;
+            let local_tl_height = (local_tl.y - local_tl_br_helper.y) as u32;
 
             let local_br_tl     = Point { // the local top left corner of the rectangle on the br screen
-                x: 0,
-                y: global_to_local(&global_tl, screen_br).y,
+                x: local_br_tl_helper.x,
+                y: local_br_tl_helper.y,
             };
-            let local_br_width  = local_br.x as u32;
+            let local_br_width  = (local_br.x - local_br_tl.x) as u32;
             let local_br_height = (local_br.y - local_br_tl.y) as u32;
 
             vec![screen_tl.capture_area(local_tl.x,    local_tl.y,     local_tl_width, local_tl_height).unwrap(),
