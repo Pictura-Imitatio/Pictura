@@ -25,7 +25,8 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
         let mut images = Vec::new();
         for capture in screens {
             let cap = capture.capture().unwrap();
-            images.push(cap);
+            images.push(cap); 
+            println!("{capture:?}");
         }
         images
     }
