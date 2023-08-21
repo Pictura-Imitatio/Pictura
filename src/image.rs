@@ -51,8 +51,8 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
 
         let screen_tl = Screen::from_point(global_tl.x, global_tl.y).unwrap();   // Screen that contains the top left coodinate
         let screen_br = Screen::from_point(global_br.x, global_br.y).unwrap();   // Screen that contains the bottom right coordinate
-        let local_tl  = global_to_local(&global_tl, screen_tl);                                  // Top left in local coordinates
-        let local_br  = global_to_local(&global_br, screen_br);                                  // Bottom right in local coordinates
+        let local_tl  = global_to_local(&global_tl, screen_tl);                  // Top left in local coordinates
+        let local_br  = global_to_local(&global_br, screen_br);                  // Bottom right in local coordinates
 
         if screen_tl.display_info.id != screen_br.display_info.id {
         /* TODO:
