@@ -64,12 +64,12 @@ fn parse(args: Vec<String>){
                         while i < args.len(){
                             match &args[i][..] {
                                 "-o"  =>  {
-                                    let points: (Option<image::Point>, Option<image::Point>) = (Some(image::Point{x:0, y:0}), Some(image::Point{x:2500, y:100}));
-                                    let compressed_images = image::run(None, Some(1), points);
+                                    let points: (Option<image::Point>, Option<image::Point>) = (Some(image::Point{x:10, y:500}), Some(image::Point{x:500, y:100}));
+                                    let compressed_images = image::run(None, points);
                                     let mut k = 0;
                                     for image in compressed_images {
                                         // TODO: make option and unwrap or for default file location
-                                        fs::write(format!("{}/{}.png",&args[i+1][..], k), image).unwrap();
+                                        fs::write(format!("target/{}.png", k), image).unwrap();
                                         k = k + 1;
                                     }
                                     i = i+1;
