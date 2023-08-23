@@ -38,7 +38,9 @@ pub fn parse(args: Vec<String>) -> () {
                                     println!("Output to file {}", &args[i+1][..]);
                                     i = i+1;
                                 }
-                                "-v"  =>  println!("Verbose"),
+                                "-v"  =>  {
+                                    println!("Verbose");
+                                },
                                 "-cp" =>  println!("Copy to clipboard"),
                                 "-t"  => { 
                                     println!("Wait {} seconds", &args[i+1][..]);
