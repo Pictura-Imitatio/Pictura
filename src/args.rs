@@ -4,31 +4,55 @@ mod gui;
 mod image_proc;
 use image;
 
+struct Arguments {
+    gui:          Option<bool>,
+    select_area:  Option<bool>,
+    text_extract: Option<bool>,
+    image_output: Option<str>,
+    text_output:  Option<str>,
+    image_to_cp:  Option<bool>,
+    text_to_cp:   Option<bool>,
+    time:         Option<str>,
+    verbose:      Option<bool>,
+}
+
 pub fn parse(args: Vec<String>) -> () {
-    let mut image: image::RgbaImage;
+    let mut arguments: Arguments = Arguments{
+    gui : None,
+    select_area: None,
+    text_extract: None,
+    image_output: None,
+    text_output: None,
+    image_to_cp: None,
+    text_to_cp: None,
+    time: None,
+    verbose: None,
+    };
+
     println!("{:?}", args);
     let help = "RTFM";
     let version = env!("CARGO_PKG_VERSION");
-    
-    if args.len() == 0 {gui::run()}
+
+    if args.len() == 0 {arguments.gui = Some(true)}
     else{
         // DONE: replace outer iter and move it into inner iters
         let mut j = 0;
         while j < args.len(){
             match &args[j][..] {
-                "--version"  | "-v" => println!("{}", version),
-                "--help"     | "-h" => println!("{}", help),
+                "--version"  | "-v" => { println!("{}", version) },
+                "--help"     | "-h" => { println!("{}", help); break;},
 
                 // optional gui flag jsut for ocd ppl
                 "--gui"             => {
                     println!("AI text extraction mode enabled");
                     // DONE: add call for gui  
-                    gui::run()
+                    arguments.gui = Some(true);
                 },
 
                 // text extraction mode
                 "--text"     | "-T" => {
                     println!("AI text extraction mode enabled");
+                    arguments.text_extract = Some(true);
                     // TODO: add AI functionality  
                     if args.len()>1{
                         let mut i = j+1;
@@ -37,6 +61,7 @@ pub fn parse(args: Vec<String>) -> () {
                                 "-o"  =>  {
                                     println!("Output to file {}", &args[i+1][..]);
                                     i = i+1;
+                                    arguments.text_output = Some(&args[i+1][..]);
                                 }
                                 "-v"  =>  {
                                     println!("Verbose");
