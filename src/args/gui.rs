@@ -2,15 +2,17 @@ use iced::window::{Position, Icon, Level};
 use iced::font::{self, Font};
 use iced::{ executor, alignment, Alignment, Command, Length, window, Application, Settings };
 use iced::widget:: {checkbox, column, container, text};
+use iced::mouse::{self, Event};
 
 use self::theme::Theme;
 use self::widget::Element;
+
 
 const ICON_FONT: Font = Font::with_name("icons");
 
 #[derive(Debug, Clone)]
 enum Message {
-    ButtonPress,
+    MouseInput
 }
 
 
@@ -49,7 +51,25 @@ impl Application for App {
         String::from("Hi")
     }
     fn update(&mut self, message: Message) -> Command<Message> {
-        Command::none()
+        println!("fdafdas");
+        match message {
+            /*Message::MouseInput(Event::ButtonPressed(mouse::Button::Left)) => {
+                println!("fhdjlahfdja");
+                Command::none()
+            }
+            _ => {
+                println!("fhdjlhfdlashflawhdjsfklhlashdfas");
+                Command::none()
+            }*/
+            Message::MouseInput => {
+                match message {
+                    _ => { 
+                        println!("fhdjsla");
+                        Command::none() 
+                    }
+                }
+            }
+        }
     }
     fn view(&self) -> Element<Message> {
         let content = column![];
@@ -58,7 +78,7 @@ impl Application for App {
             .height(Length::Fill)
             .center_x()
             .center_y()
-            .padding(20)
+            .padding(0)
             .style(theme::Container::Bordered)
             .into()    
     }
