@@ -1,8 +1,11 @@
 use iced::window::{Position, Icon, Level};
 use iced::font::{self, Font};
-use iced::{ executor, alignment, Alignment, Command, Length, window, Application, Settings };
-use iced::widget:: {checkbox, column, container, text};
-use iced::mouse::{self, Event};
+use iced::{ executor, alignment, Alignment, Command, Length, window, Application, Settings, Subscription, Point };
+use iced::widget:: {checkbox, column, container, text, mouse_area};
+// use iced::mouse::{self, Event};
+use iced::mouse;
+use iced::subscription;
+use iced::Event;
 
 use self::theme::Theme;
 use self::widget::Element;
@@ -12,7 +15,9 @@ const ICON_FONT: Font = Font::with_name("icons");
 
 #[derive(Debug, Clone)]
 enum Message {
-    MouseInput
+    onMousePressed,
+    onMouseMoved(Point),
+    onMouseReleased,
 }
 
 
@@ -50,24 +55,26 @@ impl Application for App {
     fn title(&self) -> String {
         String::from("Hi")
     }
-    fn update(&mut self, message: Message) -> Command<Message> {
-        println!("fdafdas");
-        match message {
-            /*Message::MouseInput(Event::ButtonPressed(mouse::Button::Left)) => {
-                println!("fhdjlahfdja");
+    fn update(&mut self, _message: Message) -> Command<Message> {
+        match _message {
+
+            Message::onMousePressed => {
+                println!("mouse pressed");
                 Command::none()
             }
-            _ => {
-                println!("fhdjlhfdlashflawhdjsfklhlashdfas");
+
+            Message::onMouseMoved(_point) => {
+                println!("mouse moved to {:?}", _point);
                 Command::none()
-            }*/
-            Message::MouseInput => {
-                match message {
-                    _ => { 
-                        println!("fhdjsla");
-                        Command::none() 
-                    }
-                }
+            }
+
+            Message::onMouseReleased => {
+                println!("mouse released");
+                Command::none()
+            }
+
+            _ => {
+                Command::none()
             }
         }
     }
@@ -81,6 +88,23 @@ impl Application for App {
             .padding(0)
             .style(theme::Container::Bordered)
             .into()    
+    }
+
+    fn subscription(&self) -> Subscription<Message> {
+        subscription::events_with(|event, _status| {
+            match event {
+                Event::Mouse(mouse::Event::ButtonPressed(mouse::Button::Left)) => {
+                    Some(Message::onMousePressed)
+                }
+                Event::Mouse(mouse::Event::CursorMoved { position }) => {
+                    Some(Message::onMouseMoved(position))
+                }
+                Event::Mouse(mouse::Event::ButtonReleased(mouse::Button::Left)) => {
+                    Some(Message::onMouseReleased)
+                }
+                _ => None
+            }
+        })
     }
 }
 
