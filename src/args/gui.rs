@@ -84,16 +84,17 @@ impl Application for App {
                 if self.pressed {
                     self.width = _point.x - self.cursor_pressed_position.x;
                     self.height = _point.y - self.cursor_pressed_position.y;
+                    self.cursor_released_position = _point;
                 }
                 else { 
                     self.cursor_pressed_position = _point;
                 }
-                self.cursor_released_position = _point;
                 Command::none()
             }
 
             Message::OnMouseReleased => {
                 println!("mouse released");
+                self.pressed = false;
                 Command::none()
             }
 
@@ -226,7 +227,7 @@ mod rectangle {
                 _limits: &layout::Limits,
                 ) -> layout::Node {
                 layout::Node::new(Size::new(self.width, self.height))
-                    .move_to(Point{x: self.x, y: self.y})
+                    //.move_to(Point{x: self.x, y: self.y})
             }       
             fn draw(
                 &self,
@@ -238,6 +239,7 @@ mod rectangle {
                 _cursor: mouse::Cursor,
                 _viewport: &iced::Rectangle,
                 ) {
+                //println!("{} {}", self.x, self.y);
                 renderer.fill_quad(
                     renderer::Quad {
                         bounds: layout.bounds(),

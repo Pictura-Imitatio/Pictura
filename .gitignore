@@ -1,1 +1,6 @@
 /target
+/notes
+/.obsidian 
+/src/backups
+/src/fullscreenRectangle
+/Cargo.lock
