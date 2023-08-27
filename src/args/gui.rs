@@ -39,11 +39,11 @@ pub fn run() {
 }
 
 struct App {
-    x: f32,
-    y: f32,
     width: f32,
     height: f32,
     pressed: bool,
+    cursor_pressed_position: Point,
+    cursor_released_position: Point,
 }
 
 impl Application for App {
@@ -55,11 +55,11 @@ impl Application for App {
     fn new(_flags: ()) -> (App, Command<Self::Message>) {
         (
             App {
-                x: 0f32,
-                y: 0f32,
                 width: 0f32,
                 height: 0f32,
-                pressed: false
+                pressed: false,
+                cursor_pressed_position: Point {x:0.0, y:0.0},
+                cursor_released_position: Point {x:0.0, y:0.0},
             }, 
             window::change_mode(iced::window::Mode::Fullscreen)
         )
@@ -69,18 +69,10 @@ impl Application for App {
         String::from("Pictura Selection Tool")
     }
 
-    fn update(&mut self, _message: Message) -> Command<Message>{
+    fn update(&mut self, _message: Message) -> Command<Message> {
         match _message {
             Message::OnMousePressed => {
                 println!("mouse pressed");
-                let cursor;
-                match Cursor {
-                    Cursor::Available(_point) => {
-                        self.x = _point.x;
-                        self.y = _point.y;
-                    }
-                    _ => {}
-                };
                 self.width = 0f32;
                 self.height = 0f32;
                 self.pressed = true;
@@ -90,15 +82,18 @@ impl Application for App {
             Message::OnMouseMoved(_point) => {
                 println!("mouse moved to {:?}", _point);
                 if self.pressed {
-                    self.width = _point.x - self.x;
-                    self.height = _point.y - self.y;
+                    self.width = _point.x - self.cursor_pressed_position.x;
+                    self.height = _point.y - self.cursor_pressed_position.y;
                 }
+                else { 
+                    self.cursor_pressed_position = _point;
+                }
+                self.cursor_released_position = _point;
                 Command::none()
             }
 
             Message::OnMouseReleased => {
                 println!("mouse released");
-                self.pressed = false;
                 Command::none()
             }
 
@@ -107,7 +102,7 @@ impl Application for App {
     }
     fn view(&self) -> Element<Message> {
         let content = column![
-            rectangle::rectangle(self.x, self.y, self.width, self.height),
+            rectangle::rectangle(self.cursor_pressed_position.x, self.cursor_pressed_position.y, self.width, self.height),
         ]
         .padding(0)
         .spacing(0)
@@ -144,6 +139,7 @@ mod widget {
     pub type Element<'a, Message> = iced::Element<'a, Message, Renderer>;
     pub type Container<'a, Message> = iced::widget::Container<'a, Message, Renderer>;
     pub type Button<'a, Message> = iced::widget::Button<'a, Message, Renderer>;
+    pub type Cursor = iced::mouse::Cursor;
 }
 
 mod theme {
@@ -187,7 +183,7 @@ mod rectangle {
     use iced::advanced::layout::{self, Layout};
     use iced::advanced::renderer;
     use iced::advanced::widget::{self, Widget};
-    use iced::mouse;
+    use iced::{mouse, Point};
     use iced::{Color, Element, Length, Size};
     
     pub struct Rectangle {
@@ -230,6 +226,7 @@ mod rectangle {
                 _limits: &layout::Limits,
                 ) -> layout::Node {
                 layout::Node::new(Size::new(self.width, self.height))
+                    .move_to(Point{x: self.x, y: self.y})
             }       
             fn draw(
                 &self,
@@ -250,6 +247,17 @@ mod rectangle {
                     },
                     Color::WHITE,
                 );
+
+            }
+            fn mouse_interaction(
+                &self,
+                _state: &widget::Tree,
+                _layout: Layout<'_>,
+                _cursor: mouse::Cursor,
+                _viewport: &iced::Rectangle,
+                _renderer: &Renderer
+                ) -> iced::mouse::Interaction {
+                iced::mouse::Interaction::Crosshair // Change cursor to crosshair on hover
             }
         }
     impl<'a, Message, Renderer> From<Rectangle> for Element<'a, Message, Renderer>
@@ -260,7 +268,4 @@ mod rectangle {
             Self::new(rectangle)
         }
     }
-
 }
-
-
