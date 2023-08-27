@@ -1,10 +1,25 @@
-# Pictura
-minimal screenshot and text extraction tool
-## Modes
+<h1 align="center">
+  <img src="pictura_baner_v1.png">
+</h1>
+
+Pictura is a minimal screenshot and text extraction tool
+
+Features
+--------
+- [x] Written in Rust => Blazingy fast + Lightweight
+- [ ] fullscreen screenshots
+- [ ] area selection screenshots
+- [ ] text extraction
+- [ ] optional gui
+- [ ] cli flags
+
+
+
+## Usage
 #### --help
 ```
 USAGE: pictura {mode} {flags}
-| modes and their flags here
+| ( TODO: modes and their flags here )
 EXAMPLES:
 pictura --image -cp
 pictura --text -v -o "~/Pictures"
