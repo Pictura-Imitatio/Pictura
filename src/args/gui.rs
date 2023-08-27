@@ -10,6 +10,8 @@ use iced::{
 use self::theme::Theme;
 use self::widget::Element;
 
+use crate::args::image_proc;
+
 #[derive(Debug, Clone)]
 enum Message {
     OnMousePressed,
@@ -42,6 +44,7 @@ struct App {
     width: f32,
     height: f32,
     pressed: bool,
+    released: bool,
     cursor_pressed_position: Point,
     cursor_released_position: Point,
 }
@@ -58,6 +61,7 @@ impl Application for App {
                 width: 0f32,
                 height: 0f32,
                 pressed: false,
+                released: false,
                 cursor_pressed_position: Point {x:0.0, y:0.0},
                 cursor_released_position: Point {x:0.0, y:0.0},
             }, 
@@ -76,17 +80,18 @@ impl Application for App {
                 self.width = 0f32;
                 self.height = 0f32;
                 self.pressed = true;
+                self.released = false;
                 Command::none()
             }
 
             Message::OnMouseMoved(_point) => {
                 println!("mouse moved to {:?}", _point);
-                if self.pressed {
+                if self.pressed && !self.released {
                     self.width = _point.x - self.cursor_pressed_position.x;
                     self.height = _point.y - self.cursor_pressed_position.y;
                     self.cursor_released_position = _point;
                 }
-                else { 
+                else if !self.released { 
                     self.cursor_pressed_position = _point;
                 }
                 Command::none()
@@ -95,6 +100,7 @@ impl Application for App {
             Message::OnMouseReleased => {
                 println!("mouse released");
                 self.pressed = false;
+                self.released = true;
                 Command::none()
             }
 
@@ -105,9 +111,9 @@ impl Application for App {
         let content = column![
             rectangle::rectangle(self.cursor_pressed_position.x, self.cursor_pressed_position.y, self.width, self.height),
         ]
-        .padding(0)
+        .padding([self.cursor_pressed_position.y, self.cursor_pressed_position.x])
         .spacing(0)
-        .align_items(Alignment::Center);
+        .align_items(Alignment::Start);
 
         container(content)
             .width(Length::Fill)
