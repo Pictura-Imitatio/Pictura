@@ -1,24 +1,14 @@
 use iced::window::{Position,Level};
-use iced::font::{self, Font};
-use iced:: { 
-    executor, alignment, Alignment, Command, Length, 
-    window, Settings, Subscription, Point, Application
+use iced::widget::{ column, container };
+use iced::mouse::{ self, Cursor };
+use iced::{ 
+    executor, Alignment, Command, Length, Event,
+    window, Settings, Subscription, Point, Application,
+    subscription
 };
-use iced::widget:: {column, container};
-// use iced::mouse::{self, Event};
-use iced::mouse;
-use iced::subscription;
-use iced::Event;
-use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Text};
-use crate::args::image_proc;
 
 use self::theme::Theme;
 use self::widget::Element;
-use iced::Rectangle;
-
-const ICON_FONT: Font = Font::with_name("icons");
-
-
 
 #[derive(Debug, Clone)]
 enum Message {
@@ -48,13 +38,7 @@ pub fn run() {
     App::run(settings);
 }
 
-#[derive(Debug, Clone, Default)]
-struct AppState {
-    rectnagle: Rectangle,
-    drawing: Option<Point>
-}
-
-struct App{
+struct App {
     x: f32,
     y: f32,
     width: f32,
@@ -73,23 +57,32 @@ impl Application for App {
             App {
                 x: 0f32,
                 y: 0f32,
-                width: 10f32,
-                height: 10f32,
+                width: 0f32,
+                height: 0f32,
                 pressed: false
             }, 
             window::change_mode(iced::window::Mode::Fullscreen)
         )
     }
+
     fn title(&self) -> String {
-        String::from("Hi")
+        String::from("Pictura Selection Tool")
     }
+
     fn update(&mut self, _message: Message) -> Command<Message>{
         match _message {
-
             Message::OnMousePressed => {
                 println!("mouse pressed");
-                self.x = 0f32;
-                self.y = 0f32;
+                let cursor;
+                match Cursor {
+                    Cursor::Available(_point) => {
+                        self.x = _point.x;
+                        self.y = _point.y;
+                    }
+                    _ => {}
+                };
+                self.width = 0f32;
+                self.height = 0f32;
                 self.pressed = true;
                 Command::none()
             }
@@ -97,8 +90,8 @@ impl Application for App {
             Message::OnMouseMoved(_point) => {
                 println!("mouse moved to {:?}", _point);
                 if self.pressed {
-                    self.width = _point.x;
-                    self.height = _point.y;
+                    self.width = _point.x - self.x;
+                    self.height = _point.y - self.y;
                 }
                 Command::none()
             }
@@ -109,19 +102,10 @@ impl Application for App {
                 Command::none()
             }
 
-            _ => {Command::none()}
+            _ => { Command::none() }
         }
     }
     fn view(&self) -> Element<Message> {
-        /*let content = column![];
-        container(content)
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .center_x()
-            .center_y()
-            .padding(0)
-            .style(theme::Container::Bordered)
-            .into() */
         let content = column![
             rectangle::rectangle(self.x, self.y, self.width, self.height),
         ]
@@ -163,8 +147,8 @@ mod widget {
 }
 
 mod theme {
-    use iced::widget::{button, container, text, row};
-    use iced::{application, color, Color};
+    use iced::widget::container;
+    use iced::{ application, color };
 
     #[derive(Debug, Clone, Copy, Default)]
     pub struct Theme;
@@ -279,56 +263,4 @@ mod rectangle {
 
 }
 
-/*mod rectangle {
-  use iced::mouse;
-  use iced::widget::canvas::event::{self, Event};
-  use iced::widget::canvas::{self, Canvas, Frame, Geometry, Path, Stroke};
-  use iced::{Element, Length, Point, Renderer, Theme};
 
-  #[derive(Default)]
-  pub struct State {
-  cache: canvas::Cache,
-  }
-
-  impl State {
-  pub fn view<'a>(&'a self, rectangle: &'a iced::Rectangle) -> Element<'a, Rectangle> {
-  let canvas = Canvas::new(Rectangle {
-  state: self,
-  Rectangle: rectangle,
-  });
-  canvas.width(Length.Fill);
-  canvas.height(Length.Fill);
-  canvas.into()
-  }
-
-
-  }
-  struct Rectangle<'a> {
-  state: &'a State,
-  Rectangle: &'a iced::Rectangle,
-  }
-
-  impl<'a> canvas::Program<iced::Rectangle> for Rectangle<'a> {
-  type State = Option<Pending>;
-  fn update(
-  &self,
-  state: &mut Self::State,
-  event: Event,
-  bounds: Rectangle,
-  cursor: mouse::Cursor,
-  ) -> (event::Status, Option<iced::Rectangle>) {
-  let cursor_position =
-  if let Some(position) = cursor.position_in(bounds) {
-  position
-  } else {
-  return (event::Status::Ignored, None);
-  };
-  match event {
-  Event::Mouse(mouse_event) => {
-  let message = match mouse_event {
-  mouse::Event::ButtonPressed(mouse::Button::Left) => {
-  match *state 
-  }
-  }
-  }
-  }*/
