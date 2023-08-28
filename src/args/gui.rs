@@ -19,7 +19,6 @@ enum Message {
     OnMouseReleased,
 }
 
-
 pub fn run() {
     let settings = Settings {
         window: window::Settings {
