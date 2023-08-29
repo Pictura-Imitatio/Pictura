@@ -1,4 +1,5 @@
 mod args;
+mod gui;
 use std::env;
 
 fn main() {

@@ -1,7 +1,7 @@
 use screenshots::Screen;
 use std::fs;
-mod gui;
 mod image_proc;
+use crate::gui;
 use image;
 
 pub fn parse(args: Vec<String>) -> () {
