@@ -1,5 +1,5 @@
 [package]
-name = "Pictura"
+name = "pictura"
 version = "0.4.32"
 edition = "2021"
 
