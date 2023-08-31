@@ -44,7 +44,9 @@ pub fn run() -> (LogicalPosition<f64>, LogicalPosition<f64>, LogicalPosition<f64
         platform_specific: window::PlatformSpecific::default(),
     };
 
-    let monitor = winit::window::Window::primary_monitor(&winit::window::Window::new(&event_loop).unwrap());
+    let window = &winit::window::Window::new(&event_loop).unwrap();
+    let monitor = winit::window::Window::primary_monitor(window);
+    window.set_visible(false);
     let window = win_window.into_builder(
         "Pictura",
         monitor,
