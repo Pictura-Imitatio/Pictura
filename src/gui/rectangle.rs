@@ -58,7 +58,6 @@ pub mod rectangle {
                 _viewport: &iced::Rectangle,
                 ) {
                 println!("{}, {}, {}, {}", self.x,self.y, self.width, self.height);
-                //println!("{} {}", self.x, self.y);
                 renderer.fill_quad(
                     renderer::Quad {
                         bounds: layout.bounds(),

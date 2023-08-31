@@ -1,8 +1,8 @@
 pub mod widget {
     #![allow(dead_code)]
     use crate::gui::theme::theme::Theme;
-    pub type Renderer = iced::Renderer<Theme>;
-    pub type Element<'a, Message> = iced::Element<'a, Message, Renderer>;
+    pub type Renderer = iced_wgpu::Renderer<Theme>;
+    pub type Element<'a, Message, Renderer> = iced_winit::core::Element<'a, Message, Renderer>;
     pub type Container<'a, Message> = iced::widget::Container<'a, Message, Renderer>;
     pub type Button<'a, Message> = iced::widget::Button<'a, Message, Renderer>;
     pub type Cursor = iced::mouse::Cursor;
