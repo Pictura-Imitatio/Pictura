@@ -40,18 +40,17 @@ pub fn run() -> (LogicalPosition<f64>, LogicalPosition<f64>, LogicalPosition<f64
         icon: None,
         min_size: None,
         max_size: None,
-        size: (620u32,580u32),
+        size: (1920u32,1080u32),
         platform_specific: window::PlatformSpecific::default(),
     };
 
     let monitor = winit::window::Window::primary_monitor(&winit::window::Window::new(&event_loop).unwrap());
-    let mut window = win_window.into_builder(
+    let window = win_window.into_builder(
         "Pictura",
         monitor,
         Some("Pictura".to_string())
-        ).build(&event_loop).unwrap();
-    window.set_outer_position(LogicalPosition::new(50.0, 50.0));
-    //window.set_inner_size(PhysicalSize::new(640.0,480.0));
+        ).with_transparent(true).build(&event_loop).unwrap();
+    window.set_outer_position(LogicalPosition::new(0.0, 0.0));
     let physical_size = window.inner_size();
 
     let mut viewport = iced_winit::Viewport::with_physical_size(
@@ -292,18 +291,6 @@ impl App {
                 cursor_pressed_position: Point {x:0.0, y:0.0},
                 cursor_released_position: Point {x:0.0, y:0.0},
             }
-    }
-    pub fn get_cursor_pressed_position(&self) -> Point {
-        self.cursor_pressed_position
-    }
-    pub fn get_cursor_released_position(&self) -> Point {
-        self.cursor_released_position
-    }
-    pub fn get_height(&self) -> f32 {
-        self.height
-    }
-    pub fn get_width(&self) -> f32 {
-        self.width
     }
 }
 

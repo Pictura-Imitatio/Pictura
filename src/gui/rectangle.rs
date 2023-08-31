@@ -65,7 +65,7 @@ pub mod rectangle {
                         border_width: 0.0,
                         border_color: Color::TRANSPARENT,
                     },
-                    Color::WHITE,
+                    Color::new(0.0, 0.0, 0.0, 0.6),
                 );
 
             }
