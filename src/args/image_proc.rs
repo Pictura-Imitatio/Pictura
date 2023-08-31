@@ -63,20 +63,41 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
              *  - test right to left
              *  TODO: - cover middle screen
              */
-            let local_tl_br_helper = global_to_local(&global_br, screen_tl);
-            let local_br_tl_helper = global_to_local(&global_tl, screen_br);
-            let local_tl_width  = screen_tl.display_info.width - local_tl.x as u32;
-            let local_tl_height = (local_tl.y - local_tl_br_helper.y) as u32;
 
-            let local_br_tl     = Point { // the local top left corner of the rectangle on the br screen
-                x: local_br_tl_helper.x,
-                y: local_br_tl_helper.y,
-            };
-            let local_br_width  = (local_br.x - local_br_tl.x) as u32;
-            let local_br_height = (local_br.y - local_br_tl.y) as u32;
 
-            vec![screen_tl.capture_area(local_tl.x,    local_tl.y,     local_tl_width, local_tl_height).unwrap(),
-                 screen_br.capture_area(local_br_tl.x, local_br_tl.y,  local_br_width, local_br_height).unwrap()]
+
+            let mut local_br_tl   = Point { x: 0, y: 0 };
+                if global_tl.x < screen_br.display_info.x {
+                    local_br_tl.x = 0;
+                } 
+                else {
+                    local_br_tl.x = global_tl.x - screen_br.display_info.x;
+                }
+                if global_tl.y < screen_br.display_info.y {
+                    local_br_tl.y = screen_br.display_info.y;
+                } 
+                else {
+                    local_br_tl.y = global_tl.y - screen_br.display_info.y;
+                }
+
+            let mut local_tl_br   = Point { x: 0, y: 0 };
+                if global_br.x > screen_tl.display_info.x + screen_tl.display_info.width as i32 {
+                    local_tl_br.x = screen_tl.display_info.x + screen_tl.display_info.width as i32;
+                } 
+                else {
+                    local_tl_br.x = global_br.x - screen_tl.display_info.x;
+                }
+                if global_tl.y > screen_tl.display_info.y + screen_tl.display_info.height as i32 {
+                    local_tl_br.y = screen_tl.display_info.y + screen_tl.display_info.height as i32;
+                } 
+                else {
+                    local_tl_br.y = global_br.y - screen_tl.display_info.y;
+                }
+            
+
+
+            vec![screen_tl.capture_area(local_tl.x,    local_tl.y,     (local_tl_br.y - local_tl_br.y) as u32, (local_tl_br.y - local_tl_br.y) as u32).unwrap(),
+                 screen_br.capture_area(local_br_tl.x, local_br_tl.y,  (local_br.x - local_br_tl.x) as u32,    (local_br.y - local_br_tl.y) as u32).unwrap()]
         }
 
         else {

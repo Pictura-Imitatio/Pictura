@@ -1,20 +1,15 @@
-use iced::window::{ Position, Level };
+use iced::window::Level;
 use iced::widget::{ column, container };
-use iced::mouse::{ self, Cursor };
-use iced::{ 
-    executor, Alignment, Length, Event,
-    window, Settings, Subscription, Point, Application, subscription
-};
+use iced::mouse;
+use iced::{ Alignment, Length, window, Point };
 use iced_winit::conversion;
 use iced_winit::runtime::Debug;
-use winit::dpi::{LogicalSize, LogicalPosition, Size, PhysicalPosition, PhysicalSize};
+use winit::dpi::{ LogicalPosition, PhysicalPosition };
 
-use iced_wgpu::{wgpu, Backend, Renderer, Settings as set};
-use iced_wgpu::graphics::Viewport;
+use iced_wgpu::{wgpu, Backend, Renderer};
 use iced_winit::{futures, winit, Clipboard};
 use winit::event::{MouseButton, ElementState, KeyboardInput, VirtualKeyCode};
 //use winit::platform::x11::WindowBuilderExtX11;
-use winit::window::Fullscreen;
 
 use crate::args;
 use crate::gui::theme::{ theme::Theme, widget::Element };
@@ -45,7 +40,8 @@ pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
         size: ((br.x - pos.x) as u32, (br.y - pos.y) as u32),
         platform_specific: window::PlatformSpecific::default(),
     };
-    println!("{:?}", win_window.size);
+    println!("Window Size: {:?}", win_window.size);
+    println!("Window Location {:?}", win_window.position);
 
     let monitor = winit::window::Window::primary_monitor(&winit::window::Window::new(&event_loop).unwrap());
     let window = win_window.into_builder(

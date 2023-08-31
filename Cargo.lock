@@ -3,25 +3,6 @@
 version = 3
 
 [[package]]
-name = "Pictura"
-version = "0.4.3"
-dependencies = [
- "clap",
- "env_logger",
- "iced",
- "iced_futures 0.7.0",
- "iced_graphics",
- "iced_native",
- "iced_wgpu",
- "iced_winit",
- "image",
- "log",
- "screenshots",
- "wgpu 0.17.0",
- "winit",
-]
-
-[[package]]
 name = "ab_glyph"
 version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2288,6 +2269,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90fcb95eef784c2ac79119d1dd819e162b5da872ce6f3c3abe1e8ca1c082f72b"
 dependencies = [
  "siphasher",
+]
+
+[[package]]
+name = "pictura"
+version = "0.4.32"
+dependencies = [
+ "clap",
+ "env_logger",
+ "iced",
+ "iced_futures 0.7.0",
+ "iced_graphics",
+ "iced_native",
+ "iced_wgpu",
+ "iced_winit",
+ "image",
+ "log",
+ "screenshots",
+ "wgpu 0.17.0",
+ "winit",
 ]
 
 [[package]]
