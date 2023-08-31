@@ -127,6 +127,7 @@ pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
         &mut debug,
         );
     let mut pressed = false;
+    let mut released = false;
     let mut pressed_pos = None;
     let mut released_pos = None;
     event_loop.run(move |event, _, control_flow| {
@@ -165,12 +166,14 @@ pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
                                         _state.queue_message(Message::OnMousePressed);
                                     }
                                     ElementState::Released => {
-                                        
+                                        if pressed { released = true; }
                                         _state.queue_message(Message::OnMouseReleased);
-                                        *control_flow = ControlFlow::Exit;
-                                        args::capture((pressed_pos.unwrap(), 
-                                                released_pos.unwrap(), 
-                                                window.inner_position().unwrap()));
+                                        *control_flow = ControlFlow::Exit; 
+                                        if released {
+                                            args::capture((pressed_pos.unwrap(), 
+                                                           released_pos.unwrap(), 
+                                                           window.inner_position().unwrap()));
+                                        }                                   
                                     }
                                 }
                             }

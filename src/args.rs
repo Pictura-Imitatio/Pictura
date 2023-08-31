@@ -145,8 +145,8 @@ pub fn parse(args: Vec<String>) -> () {
 }
 
 pub fn capture(app: (PhysicalPosition<f64>, PhysicalPosition<f64>, PhysicalPosition<i32>)) {
-    let points = (Some(image_proc::Point{x: app.0.x as i32 + app.2.x, y: app.0.x as i32 + app.2.x }), 
-                  Some(image_proc::Point{x: app.1.x as i32 + app.2.x, y: app.1.x as i32 + app.2.x}));
+    let points = (Some(image_proc::Point{x: app.0.x as i32 + app.2.x, y: app.0.y as i32 + app.2.y }), 
+                  Some(image_proc::Point{x: app.1.x as i32 + app.2.x, y: app.1.y as i32 + app.2.y}));
     let compressed_images = image_proc::run(None, points);
     let mut k = 0;
     for images in compressed_images {
