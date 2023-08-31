@@ -1,8 +1,9 @@
-use screenshots::Screen;
+use screenshots::{self, Screen, DisplayInfo};
+use winit::dpi::PhysicalPosition;
 use std::fs;
 mod image_proc;
 use image;
-use crate::gui;
+use crate::gui::{self, App};
 
 pub fn parse(args: Vec<String>) -> () {
     let mut image: image::RgbaImage;
@@ -21,16 +22,29 @@ pub fn parse(args: Vec<String>) -> () {
             // optional gui flag jsut for ocd ppl
             "--gui"             => {
                 println!("gui mode");
-                let app = gui::run();
-                let points = (Some(image_proc::Point{x: (app.0.x + app.2.x) as i32, y: (app.0.x + app.2.x) as i32}), 
-                              Some(image_proc::Point{x: (app.1.x + app.2.x) as i32, y: (app.1.x + app.2.x) as i32}));
-                println!("hfdjklsa");
-                let compressed_images = image_proc::run(None, points);
-                let mut k = 0;
-                for images in compressed_images {
-                    fs::write(format!("target/{}.png", k), images).unwrap();
-                    k = k + 1;
+                let screens = Screen::all().unwrap();
+                let mut pos = PhysicalPosition::new(0.0, 0.0);
+                let mut br  = PhysicalPosition::new(0.0, 0.0);
+                for screen in screens {
+                    let screen_pos = PhysicalPosition::new(screen.display_info.x as f64, screen.display_info.y as f64);
+                    let screen_br  = PhysicalPosition::new(screen_pos.x as f64 + screen.display_info.width as f64,
+                                                          screen_pos.y as f64 + screen.display_info.height as f64);
+                    if pos.x > screen_pos.x {
+                        pos.x = screen_pos.x;
+                    }
+                    if pos.y > screen_pos.y {
+                        pos.y = screen_pos.y;
+                    }
+                    if br.x < screen_br.x {
+                        br.x = screen_br.x;
+                    }
+                    if br.y < screen_br.y {
+                        br.y = screen_br.y;
+                    }
+
                 }
+                println!("{:?}\n{:?}", pos, br);
+                let app = gui::run(pos, br);
                 ()
             },
 
@@ -128,4 +142,15 @@ pub fn parse(args: Vec<String>) -> () {
         j = j+1;
     }
 
+}
+
+pub fn capture(app: (PhysicalPosition<f64>, PhysicalPosition<f64>, PhysicalPosition<i32>)) {
+    let points = (Some(image_proc::Point{x: app.0.x as i32 + app.2.x, y: app.0.x as i32 + app.2.x }), 
+                  Some(image_proc::Point{x: app.1.x as i32 + app.2.x, y: app.1.x as i32 + app.2.x}));
+    let compressed_images = image_proc::run(None, points);
+    let mut k = 0;
+    for images in compressed_images {
+        fs::write(format!("target/{}.png", k), images).unwrap();
+        k = k + 1;
+    }
 }

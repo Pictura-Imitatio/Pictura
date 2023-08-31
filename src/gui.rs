@@ -13,8 +13,10 @@ use iced_wgpu::{wgpu, Backend, Renderer, Settings as set};
 use iced_wgpu::graphics::Viewport;
 use iced_winit::{futures, winit, Clipboard};
 use winit::event::{MouseButton, ElementState, KeyboardInput, VirtualKeyCode};
+//use winit::platform::x11::WindowBuilderExtX11;
 use winit::window::Fullscreen;
 
+use crate::args;
 use crate::gui::theme::{ theme::Theme, widget::Element };
 
 use winit::{
@@ -27,7 +29,7 @@ mod theme;
 mod rectangle;
 use rectangle::rectangle as rect;
 
-pub fn run() -> (LogicalPosition<f64>, LogicalPosition<f64>, LogicalPosition<f64>) {
+pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
     env_logger::init();
     let event_loop = EventLoop::new();
     let win_window = iced_winit::settings::Window {
@@ -40,29 +42,30 @@ pub fn run() -> (LogicalPosition<f64>, LogicalPosition<f64>, LogicalPosition<f64
         icon: None,
         min_size: None,
         max_size: None,
-        size: (1920u32,1080u32),
+        size: ((br.x - pos.x) as u32, (br.y - pos.y) as u32),
         platform_specific: window::PlatformSpecific::default(),
     };
+    println!("{:?}", win_window.size);
 
-    let window = &winit::window::Window::new(&event_loop).unwrap();
-    let monitor = winit::window::Window::primary_monitor(window);
-    window.set_visible(false);
+    let monitor = winit::window::Window::primary_monitor(&winit::window::Window::new(&event_loop).unwrap());
     let window = win_window.into_builder(
         "Pictura",
         monitor,
         Some("Pictura".to_string())
-        ).with_transparent(true).build(&event_loop).unwrap();
-    window.set_outer_position(LogicalPosition::new(0.0, 0.0));
+        ).with_transparent(true)
+         //.with_override_redirect(true)
+         .build(&event_loop).unwrap();
+    window.set_outer_position(pos);
     let physical_size = window.inner_size();
 
-    let mut viewport = iced_winit::Viewport::with_physical_size(
+    let viewport = iced_winit::Viewport::with_physical_size(
         iced::Size::new(physical_size.width, physical_size.height),
         window.scale_factor(),
         );
     let mut cursor_position = None;
     let mut clipboard = Clipboard::connect(&window);
 
-    let mut modifiers = ModifiersState::default();
+    let modifiers = ModifiersState::default();
 
     let default_backend = wgpu::Backends::PRIMARY;
 
@@ -134,6 +137,7 @@ pub fn run() -> (LogicalPosition<f64>, LogicalPosition<f64>, LogicalPosition<f64
             winit::event::Event::WindowEvent { event, .. } => {
                 match event {
                     WindowEvent::CursorMoved { position, .. } => {
+                        println!("Physical Position: {:?}", position);
                         let pos: LogicalPosition<f64> = position.to_logical(window.current_monitor().unwrap().scale_factor()); 
                         _state.queue_message(Message::OnMouseMoved(Point { x: pos.x as f32, y: pos.y as f32 }));
                         if pressed { pressed_pos = Some(position); }
@@ -164,6 +168,9 @@ pub fn run() -> (LogicalPosition<f64>, LogicalPosition<f64>, LogicalPosition<f64
                                         
                                         _state.queue_message(Message::OnMouseReleased);
                                         *control_flow = ControlFlow::Exit;
+                                        args::capture((pressed_pos.unwrap(), 
+                                                released_pos.unwrap(), 
+                                                window.inner_position().unwrap()));
                                     }
                                 }
                             }
@@ -263,9 +270,7 @@ pub fn run() -> (LogicalPosition<f64>, LogicalPosition<f64>, LogicalPosition<f64
             _ => {}
         }
     });
-    return (pressed_pos.unwrap().to_logical(window.scale_factor()), 
-            released_pos.unwrap().to_logical(window.scale_factor()), 
-            window.inner_position().unwrap().to_logical(window.scale_factor()));
+
 }
 #[derive(Debug, Clone)]
 pub enum Message {
