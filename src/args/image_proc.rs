@@ -82,13 +82,13 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
 
             let mut local_tl_br   = Point { x: 0, y: 0 };
                 if global_br.x > screen_tl.display_info.x + screen_tl.display_info.width as i32 {
-                    local_tl_br.x = screen_tl.display_info.x + screen_tl.display_info.width as i32;
+                    local_tl_br.x = screen_tl.display_info.width as i32;
                 } 
                 else {
                     local_tl_br.x = global_br.x - screen_tl.display_info.x;
                 }
                 if global_tl.y > screen_tl.display_info.y + screen_tl.display_info.height as i32 {
-                    local_tl_br.y = screen_tl.display_info.y + screen_tl.display_info.height as i32;
+                    local_tl_br.y = screen_tl.display_info.height as i32;
                 } 
                 else {
                     local_tl_br.y = global_br.y - screen_tl.display_info.y;
