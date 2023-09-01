@@ -78,15 +78,17 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
                                       y: screen.display_info.y + screen.display_info.height as i32}, &global_br) {
                     local_tl = global_tl.to_local(screen);
                     local_br = global_tl.to_local(screen);
+                    println!("local_tl: {} {}\nlocal_br: {} {}", local_tl.x, local_tl.y, local_br.x, local_br.y);
                     let cap = screen.capture_area(local_tl.x, local_tl.y, 
                                                   (local_br.x - local_tl.x) as u32, 
                                                   (local_br.y - local_tl.y) as u32).unwrap();
                     images.push(cap);
                 }
             }
+            images
 
 
-            let mut local_br_tl   = Point { x: 0, y: 0 };
+            /*let mut local_br_tl   = Point { x: 0, y: 0 };
             if global_tl.x < screen_br.display_info.x {
                 local_br_tl.x = 0;
             } 
@@ -117,15 +119,16 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
 
 
 
+            println!("local_tl: {} {}\nlocal_br: {} {}", local_tl.x, local_tl.y, local_br.x, local_br.y);
             vec![screen_tl.capture_area(local_tl.x,    
                                         local_tl.y,     
-                                        (local_tl_br.y - local_tl_br.y) as u32, 
+                                        (local_tl_br.x - local_tl_br.x) as u32, 
                                         (local_tl_br.y - local_tl_br.y) as u32).unwrap(),
                                         screen_br.capture_area(local_br_tl.x, 
                                                                local_br_tl.y,  
                                                                (local_br.x - local_br_tl.x) as u32,    
                                                                (local_br.y - local_br_tl.y) as u32).unwrap()]
-        }
+        */}
 
         else {
             /* DONE:
