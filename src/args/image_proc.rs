@@ -91,7 +91,7 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
                     local_tl_br.y = screen_tl.display_info.height as i32;
                 } 
                 else {
-                    local_tl_br.y = global_br.y - screen_tl.display_info.y;
+                    local_tl_br.y = screen_tl.display_info.height as i32;
                 }
             
 
