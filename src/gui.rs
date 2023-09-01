@@ -24,7 +24,7 @@ mod theme;
 mod rectangle;
 use rectangle::rectangle as rect;
 
-pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
+pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
     env_logger::init();
     let event_loop = EventLoop::new();
     let win_window = iced_winit::settings::Window {
@@ -37,7 +37,7 @@ pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
         icon: None,
         min_size: None,
         max_size: None,
-        size: ((br.x - pos.x) as u32, (br.y - pos.y) as u32),
+        size: ((br.x - tl.x) as u32, (br.y - tl.y) as u32),
         platform_specific: window::PlatformSpecific::default(),
     };
     println!("Window Size: {:?}", win_window.size);
@@ -51,7 +51,7 @@ pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
         ).with_transparent(true)
          //.with_override_redirect(true)
          .build(&event_loop).unwrap();
-    window.set_outer_position(pos);
+    window.set_outer_position(PhysicalPosition::new(0.0,0.0));
     let physical_size = window.inner_size();
 
     let viewport = iced_winit::Viewport::with_physical_size(
@@ -166,9 +166,11 @@ pub fn run(pos: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
                                         _state.queue_message(Message::OnMouseReleased);
                                         *control_flow = ControlFlow::Exit; 
                                         if released {
-                                            args::capture((pressed_pos.unwrap(), 
-                                                           released_pos.unwrap(), 
-                                                           window.inner_position().unwrap()));
+                                            println!("pressed: {:?}\nReleased: {:?}\n",
+                                                     PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
+                                                                           pressed_pos.unwrap().y + tl.y), 
+                                                     PhysicalPosition::new(released_pos.unwrap().x + tl.x,
+                                                                           released_pos.unwrap().y + tl.y));
                                         }                                   
                                     }
                                 }
