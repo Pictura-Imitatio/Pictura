@@ -1,16 +1,17 @@
 use screenshots::{self, Screen, DisplayInfo};
 use winit::dpi::PhysicalPosition;
 use std::fs;
+use log::{info, error};
 mod image_proc;
 use image;
 use crate::gui::{self, App};
 
 pub fn parse(args: Vec<String>) -> () {
     let mut image: image::RgbaImage;
-    println!("{:?}", args);
+    info!("Arguments: {:?}", args);
     let help = "RTFM";
     let version = env!("CARGO_PKG_VERSION");
-    
+   
     if args.len() == 0 {()}
     // DONE: replace outer iter and move it into inner iters
     let mut j = 0;
@@ -21,7 +22,7 @@ pub fn parse(args: Vec<String>) -> () {
 
             // optional gui flag jsut for ocd ppl
             "--gui"             => {
-                println!("gui mode");
+                info!("GUI mode");
                 let screens = Screen::all().unwrap();
                 let mut pos = PhysicalPosition::new(0.0, 0.0);
                 let mut br  = PhysicalPosition::new(0.0, 0.0);
@@ -43,12 +44,14 @@ pub fn parse(args: Vec<String>) -> () {
                     }
 
                 }
-                println!("{:?}\n{:?}", pos, br);
+
+                info!("{:?}\n{:?}", pos, br);
                 let app = gui::run(pos, br);
                 ()
             },
 
             // text extraction mode
+            // TODO: WIP
             "--text"     | "-T" => {
                 println!("AI text extraction mode enabled");
                 // TODO: add AI functionality  
@@ -134,7 +137,7 @@ pub fn parse(args: Vec<String>) -> () {
                 if j != args.len()-1{
                     println!("pictura: invalid mode {}", args[j])
                 }else{
-                    println!("Executed successfuly!");
+                    info!("Executed successfully!");
                 }
             }
 

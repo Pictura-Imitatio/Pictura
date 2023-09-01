@@ -1,8 +1,8 @@
 use screenshots::{Compression, Screen};
+use log::{info, warn, error};
 
 
 // Struct for pixels on the screen.
-#[derive(Debug)]
 pub struct Point {
     pub x: i32,
     pub y: i32,
@@ -16,14 +16,10 @@ impl Point {
     fn to_local(&self, screen: Screen) -> Point {
         let x = self.x - screen.display_info.x;
         let y = self.y - screen.display_info.y;
-        let point = Point {
+        Point {
             x: if x > screen.display_info.width as i32 { screen.display_info.width as i32 } else if x > 0 { x } else { 0 },
             y: if y > screen.display_info.height as i32 { screen.display_info.height as i32 } else if y > 0 { y } else { 0 },
-        };
-
-        println!("Point: {:#?}", point);
-
-        point
+        }
     }
 }
 /* TODO: 
@@ -40,7 +36,7 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
         for capture in screens {
             let cap = capture.capture().unwrap();
             images.push(cap); 
-            println!("{capture:?}");
+            info!("{capture:?}");
         }
         images
     }
@@ -83,7 +79,7 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
                                       y: screen.display_info.y + screen.display_info.height as i32}, &global_br) {
                     local_tl = global_tl.to_local(screen);
                     local_br = global_tl.to_local(screen);
-                    println!("local_tl: {} {}\nlocal_br: {} {}", local_tl.x, local_tl.y, local_br.x, local_br.y);
+                    info!("local_tl: {} {}\nlocal_br: {} {}", local_tl.x, local_tl.y, local_br.x, local_br.y);
                     let cap = screen.capture_area(local_tl.x, local_tl.y, 
                                                   (local_br.x - local_tl.x) as u32, 
                                                   (local_br.y - local_tl.y) as u32).unwrap();
@@ -141,7 +137,7 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
              */
             let width:u32  = (local_br.x - local_tl.x) as u32;
             let height:u32 = (local_br.y - local_tl.y) as u32;
-            println!("LOCAL_TL_X: {}\nLOCAL_TL_Y: {}\nLOCAL_BR_X: {}\nLOCAL_BR_Y: {}\nRESULT_WIDTH: {width}\nRESULT_HEIGHT: {height}\n{screen_tl:?}", local_tl.x, local_tl.y, local_br.x, local_br.y);
+            info!("LOCAL_TL: {} / {}\nLOCAL_BR {} / {}\nRESULT: {width} / {height}\n{screen_tl:?}", local_tl.x, local_tl.y, local_br.x, local_br.y);
             vec![screen_tl.capture_area(local_tl.x, local_tl.y, width, height).unwrap()]
         }
 
