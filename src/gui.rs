@@ -134,7 +134,7 @@ pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
             winit::event::Event::WindowEvent { event, .. } => {
                 match event {
                     WindowEvent::CursorMoved { position, .. } => {
-                        println!("Physical Position: {:?}", position);
+                        //println!("Physical Position: {:?}", position);
                         let pos: LogicalPosition<f64> = position.to_logical(window.current_monitor().unwrap().scale_factor()); 
                         _state.queue_message(Message::OnMouseMoved(Point { x: pos.x as f32, y: pos.y as f32 }));
                         if pressed { pressed_pos = Some(position); }
@@ -166,11 +166,11 @@ pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
                                         _state.queue_message(Message::OnMouseReleased);
                                         *control_flow = ControlFlow::Exit; 
                                         if released {
-                                            println!("pressed: {:?}\nReleased: {:?}\n",
-                                                     PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
+                                            //println!("pressed: {:?}\nReleased: {:?}\n",
+                                                    args::capture(( PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
                                                                            pressed_pos.unwrap().y + tl.y), 
                                                      PhysicalPosition::new(released_pos.unwrap().x + tl.x,
-                                                                           released_pos.unwrap().y + tl.y));
+                                                                           released_pos.unwrap().y + tl.y)));
                                         }                                   
                                     }
                                 }
@@ -318,7 +318,7 @@ impl Program for App {
             }
 
             Message::OnMouseMoved(_point) => {
-                println!("mouse moved to {:?}", _point);
+                //println!("mouse moved to {:?}", _point);
                 if self.pressed && !self.released {
                     self.width = _point.x - self.cursor_pressed_position.x;
                     self.height = _point.y - self.cursor_pressed_position.y;
