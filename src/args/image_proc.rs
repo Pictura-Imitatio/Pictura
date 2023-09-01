@@ -1,20 +1,26 @@
 use screenshots::{Compression, Screen};
 
+
 // Struct for pixels on the screen.
 pub struct Point {
     pub x: i32,
     pub y: i32,
 }
-
-fn global_to_local(point: &Point, screen: Screen) -> Point {
-    let x = point.x - screen.display_info.x;
-    let y = point.y - screen.display_info.y;
-    Point {
-        x: if x > 0 { x } else { 0 },
-        y: if y > 0 { y } else { 0 },
-    }
+pub struct Rectangle {
+    pub tl: Point,
+    pub br: Point,
 }
 
+impl Point {
+    fn to_local(&self, screen: Screen) -> Point {
+        let x = self.x - screen.display_info.x;
+        let y = self.y - screen.display_info.y;
+        Point {
+            x: if x > screen.display_info.width as i32 { screen.display_info.width as i32 } else if x > 0 { x } else { 0 },
+            y: if y > screen.display_info.height as i32 { screen.display_info.height as i32 } else if y > 0 { x } else { 0 },
+        }
+    }
+}
 /* TODO: 
  *  DONE: - grab screens from point
  *  TODO: - attempt to allow a square of 2 monitors
@@ -53,8 +59,8 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
 
         let screen_tl = Screen::from_point(global_tl.x, global_tl.y).unwrap();   // Screen that contains the top left coodinate
         let screen_br = Screen::from_point(global_br.x, global_br.y).unwrap();   // Screen that contains the bottom right coordinate
-        let local_tl  = global_to_local(&global_tl, screen_tl);                  // Top left in local coordinates
-        let local_br  = global_to_local(&global_br, screen_br);                  // Bottom right in local coordinates
+        let mut local_tl  = global_tl.to_local(screen_tl);                  // Top left in local coordinates
+        let mut local_br  = global_br.to_local(screen_br);                  // Bottom right in local coordinates
 
         if screen_tl.display_info.id != screen_br.display_info.id {
             /* TODO:
@@ -64,40 +70,61 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
              *  TODO: - cover middle screen
              */
 
+            let mut images = Vec::<screenshots::Image>::new();
+            for screen in Screen::all().unwrap() {
+                if do_overlap(Point { x: screen.display_info.x, 
+                                      y: screen.display_info.y }, &global_tl, 
+                              Point { x: screen.display_info.x + screen.display_info.width as i32,
+                                      y: screen.display_info.y + screen.display_info.height as i32}, &global_br) {
+                    local_tl = global_tl.to_local(screen);
+                    local_br = global_tl.to_local(screen);
+                    let cap = screen.capture_area(local_tl.x, local_tl.y, 
+                                                  (local_br.x - local_tl.x) as u32, 
+                                                  (local_br.y - local_tl.y) as u32).unwrap();
+                    images.push(cap);
+                }
+            }
 
 
             let mut local_br_tl   = Point { x: 0, y: 0 };
-                if global_tl.x < screen_br.display_info.x {
-                    local_br_tl.x = 0;
-                } 
-                else {
-                    local_br_tl.x = global_tl.x - screen_br.display_info.x;
-                }
-                if global_tl.y < screen_br.display_info.y {
-                    local_br_tl.y = screen_br.display_info.y;
-                } 
-                else {
-                    local_br_tl.y = global_tl.y - screen_br.display_info.y;
-                }
+            if global_tl.x < screen_br.display_info.x {
+                local_br_tl.x = 0;
+            } 
+            else {
+                local_br_tl.x = global_tl.x - screen_br.display_info.x;
+            }
+            if global_tl.y < screen_br.display_info.y {
+                local_br_tl.y = screen_br.display_info.y;
+            } 
+            else {
+                local_br_tl.y = global_tl.y - screen_br.display_info.y;
+            }
 
             let mut local_tl_br   = Point { x: 0, y: 0 };
-                if global_br.x > screen_tl.display_info.x + screen_tl.display_info.width as i32 {
-                    local_tl_br.x = screen_tl.display_info.width as i32;
-                } 
-                else {
-                    local_tl_br.x = global_br.x - screen_tl.display_info.x;
-                }
-                if global_tl.y > screen_tl.display_info.y + screen_tl.display_info.height as i32 {
-                    local_tl_br.y = screen_tl.display_info.height as i32;
-                } 
-                else {
-                    local_tl_br.y = screen_tl.display_info.height as i32;
-                }
-            
+            if global_br.x > screen_tl.display_info.x + screen_tl.display_info.width as i32 {
+                local_tl_br.x = screen_tl.display_info.width as i32;
+            } 
+            else {
+                local_tl_br.x = global_br.x - screen_tl.display_info.x;
+            }
+            if global_tl.y > screen_tl.display_info.y + screen_tl.display_info.height as i32 {
+                local_tl_br.y = screen_tl.display_info.height as i32;
+            } 
+            else {
+                local_tl_br.y = screen_tl.display_info.height as i32;
+            }
 
 
-            vec![screen_tl.capture_area(local_tl.x,    local_tl.y,     (local_tl_br.y - local_tl_br.y) as u32, (local_tl_br.y - local_tl_br.y) as u32).unwrap(),
-                 screen_br.capture_area(local_br_tl.x, local_br_tl.y,  (local_br.x - local_br_tl.x) as u32,    (local_br.y - local_br_tl.y) as u32).unwrap()]
+
+
+            vec![screen_tl.capture_area(local_tl.x,    
+                                        local_tl.y,     
+                                        (local_tl_br.y - local_tl_br.y) as u32, 
+                                        (local_tl_br.y - local_tl_br.y) as u32).unwrap(),
+                                        screen_br.capture_area(local_br_tl.x, 
+                                                               local_br_tl.y,  
+                                                               (local_br.x - local_br_tl.x) as u32,    
+                                                               (local_br.y - local_br_tl.y) as u32).unwrap()]
         }
 
         else {
@@ -109,30 +136,48 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
             println!("{} {}/{} {}\n{width}/{height}\n{screen_tl:?}", local_tl.x, local_tl.y, local_br.x, local_br.y);
             vec![screen_tl.capture_area(local_tl.x, local_tl.y, width, height).unwrap()]
         }
-        
+
     }
 
-}
+    }
 
-pub fn run(compression: Option<String>,
-           bounds: (Option<Point>, Option<Point>)) 
-            -> Vec<Vec<u8>> {
+    pub fn run(compression: Option<String>,
+               bounds: (Option<Point>, Option<Point>)) 
+        -> Vec<Vec<u8>> {
 
-    let images = screenshot((bounds.0, bounds.1));
-    let mut compressed_buffers = Vec::new();
-    for image in images {
-        match &*compression.clone().unwrap_or_default().to_lowercase() {
-            "Best"  => {
-                compressed_buffers.push(image.to_png(Compression::Best).unwrap());
-            },
-            "Fast"  => {
-                compressed_buffers.push(image.to_png(Compression::Fast).unwrap());
-            },
+            let images = screenshot((bounds.0, bounds.1));
+            let mut compressed_buffers = Vec::new();
+            for image in images {
+                match &*compression.clone().unwrap_or_default().to_lowercase() {
+                    "Best"  => {
+                        compressed_buffers.push(image.to_png(Compression::Best).unwrap());
+                    },
+                    "Fast"  => {
+                        compressed_buffers.push(image.to_png(Compression::Fast).unwrap());
+                    },
 
-            _   => {
-                compressed_buffers.push(image.to_png(Compression::Default).unwrap());
+                    _   => {
+                        compressed_buffers.push(image.to_png(Compression::Default).unwrap());
+                    }
+                }
             }
+            compressed_buffers
         }
+
+    fn do_overlap(l1: Point, r1: &Point, l2: Point, r2: &Point) -> bool {
+        // if rectangle has area 0, no overlap
+        if l1.x == r1.x || l1.y == r1.y || r2.x == l2.x || l2.y == r2.y {
+            return false;
+        }
+        // If one rectangle is on left side of other
+        if l1.x > r2.x || l2.x > r1.x {
+            return false;
+        }
+
+        // If one rectangle is above other
+        if r1.y > l2.y || r2.y > l1.y {
+            return false;
+        }
+
+        return true;
     }
-    compressed_buffers
-}
