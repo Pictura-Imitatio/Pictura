@@ -5,6 +5,7 @@ use iced::{ Alignment, Length, window, Point };
 use iced_winit::conversion;
 use iced_winit::runtime::Debug;
 use winit::dpi::{ LogicalPosition, PhysicalPosition };
+use log::{info, warn, error};
 
 use iced_wgpu::{wgpu, Backend, Renderer};
 use iced_winit::{futures, winit, Clipboard};
@@ -25,7 +26,6 @@ mod rectangle;
 use rectangle::rectangle as rect;
 
 pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
-    env_logger::init();
     let event_loop = EventLoop::new();
     let win_window = iced_winit::settings::Window {
         resizable: false,
@@ -40,8 +40,8 @@ pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
         size: ((br.x - tl.x) as u32, (br.y - tl.y) as u32),
         platform_specific: window::PlatformSpecific::default(),
     };
-    println!("Window Size: {:?}", win_window.size);
-    println!("Window Location {:?}", win_window.position);
+    info!("Window Size: {:?}", win_window.size);
+    info!("Window Location {:?}", win_window.position);
 
     let monitor = winit::window::Window::primary_monitor(&winit::window::Window::new(&event_loop).unwrap());
     let window = win_window.into_builder(
@@ -134,7 +134,6 @@ pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
             winit::event::Event::WindowEvent { event, .. } => {
                 match event {
                     WindowEvent::CursorMoved { position, .. } => {
-                        //println!("Physical Position: {:?}", position);
                         let pos: LogicalPosition<f64> = position.to_logical(window.current_monitor().unwrap().scale_factor()); 
                         _state.queue_message(Message::OnMouseMoved(Point { x: pos.x as f32, y: pos.y as f32 }));
                         if pressed { pressed_pos = Some(position); }
@@ -166,11 +165,10 @@ pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
                                         _state.queue_message(Message::OnMouseReleased);
                                         *control_flow = ControlFlow::Exit; 
                                         if released {
-                                            //println!("pressed: {:?}\nReleased: {:?}\n",
-                                                    args::capture(( PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
-                                                                           pressed_pos.unwrap().y + tl.y), 
-                                                     PhysicalPosition::new(released_pos.unwrap().x + tl.x,
-                                                                           released_pos.unwrap().y + tl.y)));
+                                            args::capture(( PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
+                                                                                  pressed_pos.unwrap().y + tl.y), 
+                                                            PhysicalPosition::new(released_pos.unwrap().x + tl.x,
+                                                                                  released_pos.unwrap().y + tl.y)));
                                         }                                   
                                     }
                                 }
@@ -309,7 +307,7 @@ impl Program for App {
     fn update(&mut self, _message: Message) -> Command<Message> {
         match _message {
             Message::OnMousePressed => {
-                println!("mouse pressed");
+                info!("Mouse pressed");
                 self.width = 0f32;
                 self.height = 0f32;
                 self.pressed = true;
@@ -318,7 +316,6 @@ impl Program for App {
             }
 
             Message::OnMouseMoved(_point) => {
-                //println!("mouse moved to {:?}", _point);
                 if self.pressed && !self.released {
                     self.width = _point.x - self.cursor_pressed_position.x;
                     self.height = _point.y - self.cursor_pressed_position.y;
@@ -331,7 +328,7 @@ impl Program for App {
             }
 
             Message::OnMouseReleased => {
-                println!("mouse released");
+                info!("Mouse released");
                 self.pressed = false;
                 self.released = true;
                 Command::none()

@@ -20,5 +20,5 @@ wgpu = "0.17"
 image = "0.24.7"
 screenshots = "0.7.3"
 
-env_logger = "0.10"
+simple_logger = "4.2.0"
 log = "0.4"
