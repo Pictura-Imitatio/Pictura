@@ -51,7 +51,7 @@ pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
         ).with_transparent(true)
          //.with_override_redirect(true)
          .build(&event_loop).unwrap();
-    window.set_outer_position(PhysicalPosition::new(0.0,0.0));
+    window.set_outer_position(PhysicalPosition::new(tl.x,tl.y));
     let physical_size = window.inner_size();
 
     let viewport = iced_winit::Viewport::with_physical_size(
