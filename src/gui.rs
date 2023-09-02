@@ -5,15 +5,14 @@ use iced::{ Alignment, Length, window, Point };
 use iced_winit::conversion;
 use iced_winit::runtime::Debug;
 use winit::dpi::{ LogicalPosition, PhysicalPosition };
-use log::{info, warn, error};
+use log::info;
 
 use iced_wgpu::{wgpu, Backend, Renderer};
 use iced_winit::{futures, winit, Clipboard};
 use winit::event::{MouseButton, ElementState, KeyboardInput, VirtualKeyCode};
-//use winit::platform::x11::WindowBuilderExtX11;
 
 use crate::args;
-use crate::gui::theme::{ theme::Theme, widget::Element };
+use crate::gui::theme::{ Theme, widget::Element };
 
 use winit::{
     event::{Event as winEvent, ModifiersState, WindowEvent},
@@ -22,8 +21,8 @@ use winit::{
 use iced_winit::runtime::{Command, Program};
 
 mod theme;
-mod rectangle;
-use rectangle::rectangle as rect;
+pub mod rectangle;
+pub use rectangle as rect;
 
 pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
     let event_loop = EventLoop::new();
