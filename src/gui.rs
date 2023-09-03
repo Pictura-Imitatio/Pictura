@@ -339,7 +339,7 @@ impl Program for App {
 
     fn view(&self) -> Element<Message, Renderer<Theme>> {
         let content = column![
-            rect::rectangle(self.cursor_pressed_position.x, self.cursor_pressed_position.y, self.width, self.height),
+            rect::Rectangle::new(self.cursor_pressed_position.x, self.cursor_pressed_position.y, self.width, self.height),
         ]
         .padding([self.cursor_pressed_position.y, self.cursor_pressed_position.x])
         .spacing(0)
