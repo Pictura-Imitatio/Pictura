@@ -98,6 +98,8 @@ pub fn parse(args: Vec<String>) -> () {
                                         y: args[i+2][..].parse::<i32>().unwrap()}), 
                                               Some(image_proc::Point{x: args[i+3][..].parse::<i32>().unwrap(), 
                                                   y: args[i+4][..].parse::<i32>().unwrap()}));
+                                    i = i+4;
+                                    j = i;
                                 }
                                 else { 
                                     points = (None, None);

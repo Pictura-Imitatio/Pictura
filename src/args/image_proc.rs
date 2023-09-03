@@ -62,7 +62,8 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
         let screen_br = Screen::from_point(global_br.x, global_br.y).unwrap();   // Screen that contains the bottom right coordinate
         let mut local_tl  = global_tl.to_local(screen_tl);                  // Top left in local coordinates
         let mut local_br  = global_br.to_local(screen_br);                  // Bottom right in local coordinates
-
+            
+        println!("This should print no matter what");
         if screen_tl.display_info.id != screen_br.display_info.id {
             /* TODO:
              *  TODO: - top to bottom
@@ -70,15 +71,17 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
              *  - test right to left
              *  TODO: - cover middle screen
              */
-
+                
+            println!("This should print if the screens are different");
             let mut images = Vec::<screenshots::Image>::new();
             for screen in Screen::all().unwrap() {
                 if do_overlap(Point { x: screen.display_info.x, 
                                       y: screen.display_info.y }, &global_tl, 
                               Point { x: screen.display_info.x + screen.display_info.width as i32,
                                       y: screen.display_info.y + screen.display_info.height as i32}, &global_br) {
+                    println!("This should print if the screens overlap");
                     local_tl = global_tl.to_local(screen);
-                    local_br = global_tl.to_local(screen);
+                    local_br = global_br.to_local(screen);
                     info!("local_tl: {} {}\nlocal_br: {} {}", local_tl.x, local_tl.y, local_br.x, local_br.y);
                     let cap = screen.capture_area(local_tl.x, local_tl.y, 
                                                   (local_br.x - local_tl.x) as u32, 
@@ -87,7 +90,7 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
                 }
             }
             images
-
+        }   
 
             /*let mut local_br_tl   = Point { x: 0, y: 0 };
             if global_tl.x < screen_br.display_info.x {
@@ -129,7 +132,7 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
                                                                local_br_tl.y,  
                                                                (local_br.x - local_br_tl.x) as u32,    
                                                                (local_br.y - local_br_tl.y) as u32).unwrap()]
-        */}
+        */
 
         else {
             /* DONE:
@@ -168,18 +171,22 @@ fn screenshot(global_coordinates: (Option<Point>, Option<Point>)) -> Vec<screens
             compressed_buffers
         }
 
-    fn do_overlap(l1: Point, r1: &Point, l2: Point, r2: &Point) -> bool {
+    fn do_overlap(l1: Point, l2: &Point, r1: Point, r2: &Point) -> bool {
+        println!("l1: {} {}\nr1: {} {}\nl2: {} {}\nr2: {} {}", l1.x, l1.y, r1.x, r1.y, l2.x, l2.y, r2.x, r2.y);
         // if rectangle has area 0, no overlap
         if l1.x == r1.x || l1.y == r1.y || r2.x == l2.x || l2.y == r2.y {
+            println!("condition 1");
             return false;
         }
         // If one rectangle is on left side of other
         if l1.x > r2.x || l2.x > r1.x {
+            println!("condition 2");
             return false;
         }
 
         // If one rectangle is above other
-        if r1.y > l2.y || r2.y > l1.y {
+        if r1.y < l2.y || r2.y < l1.y {
+            println!("condition 3");
             return false;
         }
 
