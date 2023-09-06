@@ -8,7 +8,6 @@ use iced_wgpu::{
     }
 };
 use log::info;
-use ::wgpu::core::command::CopyError;
 use winit::{
     event_loop::EventLoop,
     window::Window, 
