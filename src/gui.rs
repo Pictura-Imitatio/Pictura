@@ -26,7 +26,6 @@ pub mod rectangle;
 pub use rectangle as rect;
 
 use self::app::state::State;
-
 pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
     let app_state = State::setup(tl, br);
     app_state.event_loop.run(move |event, _, control_flow| {

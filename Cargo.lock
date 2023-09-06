@@ -2277,7 +2277,7 @@ dependencies = [
 
 [[package]]
 name = "pictura"
-version = "0.4.32"
+version = "0.4.50"
 dependencies = [
  "clap",
  "iced",
