@@ -1,13 +1,11 @@
 use futures::core::mouse;
 use iced::window::{self, Level};
-use ::wgpu::;
-use ::wgpu::{ 
-    Instance, Surface, Backends
-};
 use iced_wgpu::{ 
     Renderer,
     Backend,
-    wgpu
+    wgpu::{ self, Queue, Device,
+    Instance, Surface, Backends
+    }
 };
 use log::info;
 use winit::{
@@ -48,6 +46,7 @@ pub struct State {
     instance: Instance,
     surface: Surface,
     debug: Debug,
+    device: Device,
     renderer: Renderer<Theme>,
     queue: Queue,
     mouse_state: MouseState,
@@ -67,6 +66,7 @@ impl State {
         instance: Instance,
         surface: Surface,
         debug: Debug,
+        device: Device,
         renderer: Renderer<Theme>,
         queue: Queue,
         mouse_state: MouseState,
@@ -84,6 +84,7 @@ impl State {
             instance,
             surface,
             debug,
+            device,
             renderer,
             queue,
             mouse_state
@@ -97,7 +98,7 @@ impl State {
                     &wgpu::CommandEncoderDescriptor { label: None },
                     );
 
-                let program = _state.program();
+                let program = self._state.program();
 
                 let view = frame.texture.create_view(
                     &wgpu::TextureViewDescriptor::default(),
@@ -111,19 +112,19 @@ impl State {
                         None,
                         &view,
                         primitive,
-                        &viewport,
-                        &debug.overlay(),
+                        &self.viewport,
+                        &self.debug.overlay(),
                         );
                 });
 
                 // Then we submit the work
-                queue.submit(Some(encoder.finish()));
+                self.queue.submit(Some(encoder.finish()));
                 frame.present();
 
                 // Update the mouse cursor
-                window.set_cursor_icon(
+                self.window.set_cursor_icon(
                     iced_winit::conversion::mouse_interaction(
-                        _state.mouse_interaction(),
+                        self._state.mouse_interaction(),
                         ),
                         );
             }
@@ -136,7 +137,7 @@ impl State {
                 }
                 _ => {
                     // Try rendering again next frame.
-                    window.request_redraw();
+                    self.window.request_redraw();
                 }
             },
         }
@@ -322,6 +323,7 @@ impl State {
                   instance,
                   surface,
                   debug,
+                  device,
                   renderer,
                   queue,
                   MouseState {
