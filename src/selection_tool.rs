@@ -5,7 +5,6 @@ use log::info;
 use iced_winit::winit;
 use winit::event::{MouseButton, ElementState, KeyboardInput, VirtualKeyCode};
 
-use crate::gui::theme::Theme;
 
 use winit::{
     event::{Event as winEvent, WindowEvent},
@@ -13,11 +12,12 @@ use winit::{
 };
 
 mod theme;
-mod app;
+pub mod app;
 pub mod rectangle;
 pub use rectangle as rect;
 
 use self::app::state::State;
+pub use self::app::App;
 
 
 pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {

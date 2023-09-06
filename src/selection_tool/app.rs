@@ -2,7 +2,7 @@ use iced::{Point, Command, Element, Alignment, widget::{container, column}, Leng
 use iced_wgpu::Renderer;
 use iced_winit::runtime::Program;
 use log::info;
-use crate::gui::rectangle::Rectangle;
+use crate::selection_tool::rectangle::Rectangle;
 
 use super::theme::Theme;
 

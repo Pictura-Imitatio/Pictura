@@ -8,6 +8,7 @@ use iced_wgpu::{
     }
 };
 use log::info;
+use ::wgpu::core::command::CopyError;
 use winit::{
     event_loop::EventLoop,
     window::Window, 
@@ -23,7 +24,7 @@ use iced_winit::{
     futures, conversion,
 };
 
-use crate::gui::theme::Theme;
+use crate::selection_tool::theme::Theme;
 
 use super::{App, Message};
 
@@ -50,6 +51,7 @@ pub struct State {
     renderer: Renderer<Theme>,
     queue: Queue,
     mouse_state: MouseState,
+    tl: PhysicalPosition<f64>,
 }
 
 impl State {
@@ -69,6 +71,7 @@ impl State {
         device: Device,
         renderer: Renderer<Theme>,
         queue: Queue,
+        tl: PhysicalPosition<f64>,
         mouse_state: MouseState,
     ) -> State {
         State {
@@ -87,20 +90,21 @@ impl State {
             device,
             renderer,
             queue,
-            mouse_state
+            mouse_state,
+            tl
         }
     }
 
-    pub fn release(&self) {
-        if self.mouse_pressed() { released = true; }
-        self._state.queue_message(Message::OnMouseReleased);
-        if released {
-            args::capture(( PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
-            pressed_pos.unwrap().y + tl.y), 
-                            PhysicalPosition::new(released_pos.unwrap().x + tl.x,
-                            released_pos.unwrap().y + tl.y)));
+    pub fn release(&self) -> Option<(PhysicalPosition<f64>, PhysicalPosition<f64>)> {
+        if self.mouse_pressed() { self.mouse_state.pressed = false;
+            self._state.queue_message(Message::OnMouseReleased);
+            let pressed_pos = self.mouse_state.position;
+            return Some((PhysicalPosition::new(pressed_pos.x + self.tl.x,
+                                               pressed_pos.y + self.tl.y), 
+                         PhysicalPosition::new(self.cursor_position.unwrap().x + self.tl.x,
+                         self.cursor_position.unwrap().y + self.tl.y)));
         }
-
+        None
     }
 
     pub fn request_redraw(&self) {
@@ -338,10 +342,11 @@ impl State {
                   device,
                   renderer,
                   queue,
+                  tl,
                   MouseState {
                       pressed: false,
                       was_pressed: false,
                       position: LogicalPosition::<f64>::new(0.0,0.0)
-                  })
+                  },)
     }
 }

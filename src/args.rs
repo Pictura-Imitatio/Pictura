@@ -4,7 +4,7 @@ use std::fs;
 use log::{info, error};
 mod image_proc;
 use image;
-use crate::gui::{self, App};
+use crate::selection_tool;
 
 pub fn parse(args: Vec<String>) -> () {
     let mut image: image::RgbaImage;
@@ -46,7 +46,7 @@ pub fn parse(args: Vec<String>) -> () {
                 }
 
                 info!("{:?}\n{:?}", pos, br);
-                let app = gui::run(pos, br);
+                let app = selection_tool::run(pos, br);
                 ()
             },
 

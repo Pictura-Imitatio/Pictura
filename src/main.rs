@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 
 mod args;
-mod gui;
+mod selection_tool;
 use std::env;
 
 fn main() {

@@ -1,6 +1,6 @@
 pub mod widget {
     #![allow(dead_code)]
-    use crate::gui::theme::Theme;
+    use crate::selection_tool::theme::Theme;
     pub type Renderer = iced_wgpu::Renderer<Theme>;
     pub type Element<'a, Message, Renderer> = iced_winit::core::Element<'a, Message, Renderer>;
     pub type Container<'a, Message> = iced::widget::Container<'a, Message, Renderer>;
