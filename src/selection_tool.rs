@@ -44,38 +44,38 @@ pub fn run(tl: PhysicalPosition<f64>, br: PhysicalPosition<f64>) {
                 } => { 
                     *control_flow = ControlFlow::Exit; 
                 }
-                WindowEvent::MouseInput { state, button, .. } => { if event == MouseButton::Left { 
-                    ElementState::Pressed => {
-                        app_state.press();
-                    }
-                    ElementState::Released => {
-                        if pressed { released = true; }
-                        _state.queue_message(Message::OnMouseReleased);
-                        *control_flow = ControlFlow::Exit; 
-                        if released {
-                            args::capture(( PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
-                            pressed_pos.unwrap().y + tl.y), 
-                                            PhysicalPosition::new(released_pos.unwrap().x + tl.x,
-                                            released_pos.unwrap().y + tl.y)));
+                WindowEvent::MouseInput { state, button, .. } => { 
+                    match (button, state) {
+                        (MouseButton::Left,
+                        ElementState::Pressed) => {
+                            app_state.press();
                         }
+                        (MouseButton::Left,
+                        ElementState::Released) => {
+                            app_state.release();
+                            *control_flow = ControlFlow::Exit; 
+                        }
+                        (MouseButton::Right, _) => {
+                            *control_flow = ControlFlow::Exit;
+                        }
+                        _ => {}
                     }
                 }
-            }
-            _ => {}
+                _ => {}
             }
             // Map window event to iced event
             app_state.map_to_iced(&event);
-        },
-        winEvent::MainEventsCleared => {
-            if !app_state._state.is_queue_empty() {
-                app_state.update_iced();
+            },
+            winEvent::MainEventsCleared => {
+                if !app_state._state.is_queue_empty() {
+                    app_state.update_iced();
+                }
             }
+            winEvent::RedrawRequested(_) => {
+                app_state.request_redraw()
+            }
+            _ => {}
         }
-        winEvent::RedrawRequested(_) => {
-            app_state.request_redraw()
-        }
-        _ => {}
-    }
-});
+    });
 
 }

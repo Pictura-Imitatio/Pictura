@@ -91,6 +91,18 @@ impl State {
         }
     }
 
+    pub fn release(&self) {
+        if self.mouse_pressed() { released = true; }
+        self._state.queue_message(Message::OnMouseReleased);
+        if released {
+            args::capture(( PhysicalPosition::new(pressed_pos.unwrap().x + tl.x,
+            pressed_pos.unwrap().y + tl.y), 
+                            PhysicalPosition::new(released_pos.unwrap().x + tl.x,
+                            released_pos.unwrap().y + tl.y)));
+        }
+
+    }
+
     pub fn request_redraw(&self) {
         match self.surface.get_current_texture() {
             Ok(frame) => {
